@@ -1,17 +1,35 @@
 import requests
-import json as js
+import json
 
-#importando la inagen requerida
-import base64
-with open("descarga.jpg","rb") as imagefile:
-    convert = base64.b64encode(imagefile.read())
-print(convert.decode('utf-8'))
+url = "https://api.groq.com/openai/v1/chat/completions"
 
+API_KEY = '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'
 
-uri="http://localhost:11434/api/generate -d" 
-data= {"model": "llava","prompt":"What is in this picture?","images": []}
+headers = {
+    "content-type": "application/json",
+    "Authorization": f"Bearer {API_KEY}"
+}
 
-response=requests.post(uri, js=data)
-response=json.loads(response, text)
+data = {
+    "messages": [
+        {
+            "role": "system",
+            "content": "Un profesor de inglés es un educador dedicado a enseñar el idioma inglés a estudiantes de diferentes niveles y edades."
+        },
+        {
+            "role": "user",
+            "content": "¿Que son los adjetivo?"
+        }
+    ],
+    "model": "llama3-8b-8192",
+    "temperature": 1,
+    "max_tokens": 1024,
+    "top_p": 1,
+    "stream": False,
+    "stop": None
+}
 
-print(response['response'])
+response = requests.post(url, json=data, headers=headers)
+response_data = json.loads(response.text)
+
+print(response_data['choices'][0]['message']['content'])
